@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate CV Engine | Professional Builder</title>
+    
+    <!-- مكتبات خارجية أساسية -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- ربط ملفاتك -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-100">
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-slate-900 text-white p-6 shadow-lg">
+            <h1 class="text-2xl font-black">Ultimate CV Engine <span class="text-blue-400">PRO</span></h1>
+        </header>
+
+        <main class="flex-grow container mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- لوحة المدخلات -->
+            <section id="editor-panel" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-6 text-slate-800">محرر البيانات</h2>
+                
+                <div id="form-container" class="space-y-6">
+                    <!-- سيتم حقن الحقول هنا بواسطة الجافاسكربت -->
+                    <div class="input-group">
+                        <label class="block text-sm font-medium mb-2">الاسم الكامل</label>
+                        <input type="text" id="fullName" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                    <!-- المزيد من الحقول ستُضاف لاحقاً -->
+                </div>
+            </section>
+
+            <!-- لوحة المعاينة -->
+            <section id="preview-panel" class="sticky top-6">
+                <div id="cv-canvas" class="cv-page bg-white shadow-2xl rounded-sm">
+                    <!-- المعاينة الاحترافية -->
+                    <div id="cv-content">
+                        <h2 id="view-name" class="text-3xl font-bold">...</h2>
+                        <!-- المحتوى سيُحدث بواسطة الجافاسكربت -->
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex gap-4">
+                    <button id="download-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition">تحميل PDF</button>
+                    <button id="save-btn" class="px-6 bg-slate-800 text-white rounded-xl font-bold hover:bg-black transition">حفظ العمل</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ربط ملف الجافاسكربت -->
+    <script src="script.js"></script>
+</body>
+</html>
