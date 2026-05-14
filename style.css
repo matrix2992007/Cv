@@ -1,0 +1,87 @@
+/* 1. المتغيرات والأساسيات */
+:root {
+    --primary-color: #2563eb;
+    --bg-light: #f1f5f9;
+    --text-dark: #1e293b;
+    --font-main: 'Tajawal', sans-serif;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* 2. تصميم منطقة المعاينة (CV Canvas) - تنسيق احترافي للطباعة */
+.cv-page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 15mm;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transform-origin: top center;
+    transition: transform 0.3s ease;
+}
+
+/* 3. عناصر التحكم (Input Panels) */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #475569;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 4. تصميم العناصر داخل الـ CV */
+#cv-content h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.cv-section-title {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* 5. تأثيرات حركية (Animations) */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 6. تحسينات للطباعة */
+@media print {
+    body { background: white; }
+    #editor-panel, #download-btn, #save-btn { display: none; }
+    .cv-page { box-shadow: none; margin: 0; }
+}
+
+/* إضافة المزيد من التنسيقات هنا لتصل للعدد المطلوب من الأسطر... */
