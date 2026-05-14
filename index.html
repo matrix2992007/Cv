@@ -3,59 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate CV Engine | Professional Builder</title>
-    
-    <!-- مكتبات خارجية أساسية -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
-    <!-- ربط ملفاتك -->
-    <link rel="stylesheet" href="style.css">
+    <title>Ultimate CV Builder Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --dark-blue: #2c3e50;
+            --gold: #d4af37;
+            --sidebar-bg: #f8f9fa;
+            --text-main: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* لوحة التحكم */
+        .editor-side {
+            width: 450px;
+            background: #fff;
+            padding: 25px;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .editor-side h2 { color: var(--dark-blue); border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+
+        .field-box {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
+        input, textarea, select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;
+        }
+
+        .btn-download {
+            background: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px;
+            font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 20px;
+        }
+
+        /* ورقة السي في */
+        .preview-side {
+            flex: 1;
+            background: #525659;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        #cv-paper {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            display: flex; /* نظام العمودين */
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        /* العمود الأيمن (Sidebar) */
+        .cv-sidebar {
+            width: 35%;
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .profile-img-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border: 4px solid var(--gold);
+            border-radius: 50%;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .profile-img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .side-section { margin-bottom: 25px; }
+        .side-title { color: var(--gold); border-bottom: 1px solid #5d6d7e; margin-bottom: 10px; font-size: 1.1em; padding-bottom: 5px; }
+        .side-content { font-size: 0.9em; line-height: 1.8; }
+
+        /* العمود الأيسر (Main Content) */
+        .cv-main {
+            width: 65%;
+            padding: 40px;
+            color: var(--text-main);
+        }
+
+        .cv-name { font-size: 36px; margin: 0; color: var(--dark-blue); }
+        .cv-tagline { font-size: 18px; color: var(--gold); font-weight: bold; margin-bottom: 30px; }
+
+        .main-section { margin-bottom: 25px; }
+        .main-title { 
+            font-size: 1.3em; color: var(--dark-blue); border-right: 5px solid var(--dark-blue); 
+            padding-right: 10px; margin-bottom: 15px; background: #f8f9fa;
+        }
+
+        .entry { margin-bottom: 15px; }
+        .entry-head { font-weight: bold; display: flex; justify-content: space-between; }
+        .entry-body { font-size: 0.95em; color: #555; white-space: pre-line; }
+
+    </style>
 </head>
-<body class="bg-slate-100">
+<body>
 
-    <div id="app" class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-slate-900 text-white p-6 shadow-lg">
-            <h1 class="text-2xl font-black">Ultimate CV Engine <span class="text-blue-400">PRO</span></h1>
-        </header>
+    <div class="editor-side">
+        <h2>إعدادات السي في المحترف</h2>
+        
+        <div class="field-box">
+            <label>الصورة الشخصية</label>
+            <input type="file" id="imgInput" accept="image/*" onchange="previewImage(event)">
+        </div>
 
-        <main class="flex-grow container mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- لوحة المدخلات -->
-            <section id="editor-panel" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-6 text-slate-800">محرر البيانات</h2>
-                
-                <div id="form-container" class="space-y-6">
-                    <!-- سيتم حقن الحقول هنا بواسطة الجافاسكربت -->
-                    <div class="input-group">
-                        <label class="block text-sm font-medium mb-2">الاسم الكامل</label>
-                        <input type="text" id="fullName" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
-                    </div>
-                    <!-- المزيد من الحقول ستُضاف لاحقاً -->
-                </div>
-            </section>
+        <div class="field-box">
+            <label>الاسم الكامل</label>
+            <input type="text" id="inName" placeholder="يوسف محمد" oninput="syncText('outName', this.value)">
+            <label>المسمى الوظيفي</label>
+            <input type="text" id="inTitle" placeholder="Cyber Security Specialist" oninput="syncText('outTitle', this.value)">
+        </div>
 
-            <!-- لوحة المعاينة -->
-            <section id="preview-panel" class="sticky top-6">
-                <div id="cv-canvas" class="cv-page bg-white shadow-2xl rounded-sm">
-                    <!-- المعاينة الاحترافية -->
-                    <div id="cv-content">
-                        <h2 id="view-name" class="text-3xl font-bold">...</h2>
-                        <!-- المحتوى سيُحدث بواسطة الجافاسكربت -->
-                    </div>
-                </div>
-                
-                <div class="mt-6 flex gap-4">
-                    <button id="download-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition">تحميل PDF</button>
-                    <button id="save-btn" class="px-6 bg-slate-800 text-white rounded-xl font-bold hover:bg-black transition">حفظ العمل</button>
-                </div>
-            </section>
-        </main>
+        <div class="field-box">
+            <label>نبذة عنك (About Me)</label>
+            <textarea id="inAbout" rows="4" oninput="syncText('outAbout', this.value)"></textarea>
+        </div>
+
+        <div class="field-box">
+            <label>المهارات (كل مهارة في سطر)</label>
+            <textarea id="inSkills" rows="3" oninput="syncList('outSkills', this.value)"></textarea>
+        </div>
+
+        <div class="field-box">
+            <label>الخبرات العملية</label>
+            <textarea id="inExp" rows="5" placeholder="الشركة - التاريخ&#10;شرح المهام..." oninput="syncText('outExp', this.value)"></textarea>
+        </div>
+
+        <div class="field-box">
+            <label>الكورسات والشهادات</label>
+            <textarea id="inCert" rows="3" oninput="syncText('outCert', this.value)"></textarea>
+        </div>
+
+        <div class="field-box">
+            <label>التواصل (إيميل، هاتف، روابط)</label>
+            <input type="text" placeholder="الإيميل" oninput="syncText('outEmail', this.value)">
+            <input type="text" placeholder="الهاتف" oninput="syncText('outPhone', this.value)">
+            <input type="text" placeholder="LinkedIn" oninput="syncText('outLink', this.value)">
+        </div>
+
+        <button class="btn-download" onclick="exportPDF()">حفظ بصيغة PDF 🚀</button>
     </div>
 
-    <!-- ربط ملف الجافاسكربت -->
-    <script src="script.js"></script>
+    <div class="preview-side">
+        <div id="cv-paper">
+            <div class="cv-sidebar">
+                <div class="profile-img-container">
+                    <img id="profilePic" src="https://via.placeholder.com/150" alt="Profile">
+                </div>
+
+                <div class="side-section">
+                    <div class="side-title">اتصل بي</div>
+                    <div class="side-content">
+                        📧 <span id="outEmail">youssef@example.com</span><br>
+                        📞 <span id="outPhone">0123456789</span><br>
+                        🔗 <span id="outLink">linkedin.com/in/youssef</span>
+                    </div>
+                </div>
+
+                <div class="side-section">
+                    <div class="side-title">المهارات</div>
+                    <ul id="outSkills" class="side-content" style="padding-right: 20px;">
+                        <li>HTML / CSS</li>
+                        <li>JavaScript</li>
+                        <li>Python</li>
+                    </ul>
+                </div>
+
+                <div class="side-section">
+                    <div class="side-title">اللغات</div>
+                    <div class="side-content">العربية (الأم)<br>الإنجليزية (ممتاز)</div>
+                </div>
+            </div>
+
+            <div class="cv-main">
+                <h1 class="cv-name" id="outName">يوسف محمد</h1>
+                <div class="cv-tagline" id="outTitle">Cyber Security Specialist</div>
+
+                <div class="main-section">
+                    <div class="main-title">الملخص المهني</div>
+                    <div class="entry-body" id="outAbout">
+                        شخص طموح مهتم بمجال الأمن السيبراني وبرمجة الويب، أسعى لتطوير مهاراتي في حماية البيانات وبناء أنظمة آمنة وقوية.
+                    </div>
+                </div>
+
+                <div class="main-section">
+                    <div class="main-title">الخبرة العملية</div>
+                    <div id="outExp" class="entry-body">
+                        اسم الشركة (2023 - الحالي)
+                        - مطور واجهات أمامية واستشاري أمن.
+                        - العمل على تأمين ثغرات المواقع.
+                    </div>
+                </div>
+
+                <div class="main-section">
+                    <div class="main-title">التعليم والكورسات</div>
+                    <div id="outCert" class="entry-body">
+                        - جامعة العريش - كلية العلوم.
+                        - شهادة CCNA في الشبكات.
+                        - كورس Python المتقدم.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // مزامنة النصوص
+        function syncText(id, val) {
+            document.getElementById(id).innerText = val || "...";
+        }
+
+        // مزامنة المهارات كقائمة
+        function syncList(id, val) {
+            const list = document.getElementById(id);
+            list.innerHTML = "";
+            val.split('\n').forEach(item => {
+                if(item.trim()) {
+                    const li = document.createElement('li');
+                    li.innerText = item;
+                    list.appendChild(li);
+                }
+            });
+        }
+
+        // معالجة الصورة الشخصية
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profilePic');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // تحويل السي في لـ PDF
+        function exportPDF() {
+            const element = document.getElementById('cv-paper');
+            const opt = {
+                margin: 0,
+                filename: 'Professional_CV.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>
